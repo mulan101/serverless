@@ -1,0 +1,55 @@
+service: notice 
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: dev
+  region: us-west-2
+
+plugins:
+ - serverless-apigw-binary
+custom:
+  apigwBinary:
+    types:
+      - 'application/json'
+
+functions:
+  getNoticeList:
+    handler: handler.getNoticeList
+    events: 
+      - http:
+          path: getNoticeList
+          method: get
+          cors: true
+  
+  getNotice:
+    handler: handler.getNotice
+    events: 
+      - http:
+          path: /{proxy+}
+          method: get
+          cors: true
+          
+  createNotice:
+    handler: handler.createNotice
+    events: 
+      - http:
+          path: createNotice
+          method: put
+          cors: true
+  
+  updateNotice:
+    handler: handler.updateNotice
+    events: 
+      - http:
+          path: /{proxy+}
+          method: post
+          cors: true
+          
+  deleteNotice:
+    handler: handler.deleteNotice
+    events: 
+      - http:
+          path: /{proxy+}
+          method: delete
+          cors: true

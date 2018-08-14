@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <title>조회</title>
+        
+        <link rel="stylesheet" href="css/table.css">
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+        
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                lfn_process();
+            });
+            function lfn_buttonClick() {
+                $("#tableRowId").remove();
+                lfn_process();
+            }
+            
+            function lfn_createClick() {
+                location.href = "/noticeRegist.html";
+            }
+            
+            function lfn_process() {
+                $.ajax({
+                    type: "GET",
+                    url : "https://a1r1j480z1.execute-api.us-west-2.amazonaws.com/dev/getNoticeList",
+                    //data: createData(),
+                    dataType:"json",
+                    contentType: "application/json",
+                    success : function(data, status, xhr) {
+                       if(status == "success") {
+                           $.each(data, function(seq, el) {
+                               var innerDiv = "<div class=\"divTableRow\" id=\"tableRowId\">" + 
+                                              "<div class=\"divTableCell\">"+el.id+"</div>" +
+                                              "<div class=\"divTableCell\">"+el.title+"</div>" +
+                                              "<div class=\"divTableCell\">"+el.create_date+"</div>" +
+                                              "<div class=\"divTableCell\">"+el.update_date+"</div>" +
+                                              "</div>";
+                               
+                               $('#tableId').append(innerDiv);
+                           });
+                       }
+                    },
+                    error: function(jqXHR, exception) {
+                        var msg = '';
+                        if (jqXHR.status === 0) {
+                            msg = 'Not connect.\n Verify Network.';
+                        } else if (jqXHR.status == 404) {
+                            msg = 'Requested page not found. [404]';
+                        } else if (jqXHR.status == 500) {
+                            msg = 'Internal Server Error [500].';
+                        } else if (exception === 'parsererror') {
+                            msg = 'Requested JSON parse failed.';
+                        } else if (exception === 'timeout') {
+                            msg = 'Time out error.';
+                        } else if (exception === 'abort') {
+                            msg = 'Ajax request aborted.';
+                        } else {
+                            msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        }
+                        alert(msg);
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <button onclick="lfn_buttonClick()"><span>Search</span></button>
+        <button onclick="lfn_createClick()"><span>Create</span></button>
+        <div class="divTable blueTable" id="tableId">
+            <div class="divTableHeading">
+                <div class="divTableRow">
+                    <div class="divTableHead">ID</div>
+                    <div class="divTableHead">TITLE</div>
+                    <div class="divTableHead">CREATE_DATE</div>
+                    <div class="divTableHead">UPDATE_DATE</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

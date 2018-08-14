@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <title>등록</title>
+        
+        <link rel="stylesheet" href="css/table.css">
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+        
+        <script type="text/javascript">
+            $( document ).ready(function() {
+               // lfn_process();
+            });
+            function lfn_saveClick() {
+                var sTitle = $('#titleId').val();
+                var sContent = $('#contentsId').val();
+                var params = {"title": sTitle, "contents": sContent};
+                lfn_process("PUT","https://a1r1j480z1.execute-api.us-west-2.amazonaws.com/dev/createNotice",params);
+            }
+            
+            function lfn_cancelClick() {
+                location.href = "/noticeList.html";
+            }
+            
+            function lfn_process(method, url, params) {
+                $.ajax({
+                    type: method,
+                    contentType: "application/json",
+                    url : url,
+                    data: JSON.stringify(params),
+                    dataType: "json",
+                    success : function(data, status, xhr) {
+                       alert(data.result);
+                       lfn_cancelClick();
+                    },
+                    error: function(jqXHR, exception) {
+                        var msg = '';
+                        if (jqXHR.status === 0) {
+                            msg = 'Not connect.\n Verify Network.';
+                        } else if (jqXHR.status == 404) {
+                            msg = 'Requested page not found. [404]';
+                        } else if (jqXHR.status == 500) {
+                            msg = 'Internal Server Error [500].';
+                        } else if (exception === 'parsererror') {
+                            msg = 'Requested JSON parse failed.';
+                        } else if (exception === 'timeout') {
+                            msg = 'Time out error.';
+                        } else if (exception === 'abort') {
+                            msg = 'Ajax request aborted.';
+                        } else {
+                            msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        }
+                        alert(msg);
+                    }
+                });
+            }
+            
+        </script>
+    </head>
+    <body>
+        <button onclick="lfn_saveClick()"><span>Save</span></button>
+        <button onclick="lfn_cancelClick()"><span>Cancel</span></button>
+        <table class="blueTable">
+            <tr>
+                <td>Title</td>
+                <td>
+                    <input type="text" id="titleId" style="width:98%"/>
+                </td>    
+            </tr>
+            <tr>
+                <td>Contents</td>
+                <td>
+                    <textarea id="contentsId" style="height:150px;width:98%"></textarea>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
